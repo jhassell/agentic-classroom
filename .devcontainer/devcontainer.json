@@ -23,9 +23,10 @@
     "ghcr.io/devcontainers/features/github-cli:1.1.2": { "version": "2.100.0" }
   },
 
-  // Once VS Code attaches (the Codespace token exists only then), serve ONLY
-  // site/ on port 8000 and make that one port public.
-  "postAttachCommand": "bash .devcontainer/site-public.sh",
+  // NO postAttachCommand. The public site on port 8000 (site-public.sh) is started
+  // from autostart.sh in the background instead. A postAttachCommand is held back
+  // until Trust and then run in a NEW visible terminal that takes focus, hiding
+  // the first terminal where setup and the agent are (measured 2026-09-14).
 
   // onCreateCommand, NOT postCreateCommand: GitHub runs onCreateCommand inside a
   // Codespaces prebuild (if you enable one) and never runs postCreateCommand

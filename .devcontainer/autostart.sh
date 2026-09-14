@@ -112,6 +112,14 @@ __ac_autostart() {    # $1 = path of this file
   [ -t 0 ] && [ -t 1 ] || return 0
   [ -z "${VSCODE_RESOLVING_ENVIRONMENT:-}" ] || return 0
   case "${TERM_PROGRAM:-}" in vscode|codespaces) ;; *) return 0 ;; esac
+
+  # Public site on port 8000, in every VS Code terminal of a Codespace and before
+  # the ready/lock guards, so it also comes back after a Codespace restart.
+  # site-public.sh is idempotent and prints nothing; it runs detached.
+  if [ -n "${CODESPACE_NAME:-}" ] && [ -n "$1" ] && [ -f "$(dirname "$1")/site-public.sh" ]; then
+    ( setsid nohup bash "$(dirname "$1")/site-public.sh" >/dev/null 2>&1 </dev/null & ) 2>/dev/null
+  fi
+
   [ -z "${CLASSROOM_NO_AUTOSTART+x}" ] || return 0
   [ ! -e "$HOME/.agentic-classroom-ready" ] || return 0
 
