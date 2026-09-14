@@ -261,6 +261,15 @@ fi
 # Future terminals in this Codespace start setup by themselves until READY.
 install_autostart_line 2>/dev/null || true
 
+# Public site on port 8000. postAttachCommand does this too, but VS Code holds
+# it back while the folder is untrusted and does not run it after Trust until
+# the page reloads (measured 2026-09-14). This terminal only exists after Trust,
+# so start it here as well, in the background; it is idempotent. Codespaces only.
+if [ -n "${CODESPACE_NAME:-}" ] && [ -f "$ROOT/.devcontainer/site-public.sh" ] \
+   && [ ! -s "$SITE_URL_FILE" ]; then
+  ( setsid nohup bash "$ROOT/.devcontainer/site-public.sh" >/dev/null 2>&1 </dev/null & ) 2>/dev/null
+fi
+
 # ------------------------------------------------------------- 1. tooling
 # Everything that does not need your key happens first, so a container problem
 # surfaces before you are asked for a key. The container normally installs these
